@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>{{currency.name}} Details</title>
+     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+     
+</head>
+ 
+<body>
+    <div class="container">
+        <div>
+            <h1>{{currency.name}} Details</h1>
+            
+            <ul>
+                <li>Open: {{currency.cr_open}}</li>
+                <li>Close: {{currency.cr_close}}</li>
+                <li>High: {{currency.cr_high}}</li>
+                <li>Low: {{currency.cr_low}}</li>
+            </ul>
+        </div>
+
+        
+        <div>
+        <form>
+        <button id="btn_graph" type="button">Graph</button>
+        <button id="btn_history" type="button">History</button>
+        <button id="btn_news" type="submit" value="{{currency.asset_id}}">News</button>
+        <button id="btn_market" type="submit" value="{{currency.asset_id}}" >market</button>
+        <button id="btn_prediction" type="submit" value="{{currency.asset_id}}">Prediction</button>
+        <button id="btn_calculate" type="button">Calculate</button>
+        </form>
+        </div>
+        
+    </div>
+    
+    <script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script>window.jQuery || document.write('<script src="{{
+  url_for('static', filename='jquery-3.3.1.js') }}">\x3C/script>')</script>
+    <script>
+      //News
+  $(function() {
+    $('#btn_news').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/news', {
+        asset_id: $('#btn_news').val()
+      }, function(data) {
+           if( data[0].status =="success"){
+               if(data[1].status=="ok"){
+                   console.log(data[1].articles)
+               }
+               
+           }else{
+           alert("Oops! Something went wrong.");
+           }
+      });
+      return false;
+    });
+  });
+    
+    //Market Details
+  $(function() {
+  asset_id = $('#btn_market').val()
+    $('#btn_market').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/market_details', {
+        asset_id: asset_id
+      }, function(data) {
+           if( data[0].status =="success"){
+           display = data[1].DISPLAY
+           console.log(display[asset_id].USD)
+               //console.log(data[1].DISPLAY.$('#btn_market').val().USD)
+           }else{
+           alert("Oops! Something went wrong.");
+           }
+      });
+      return false;
+    });
+  });
+
+//Prediction
+ $(function() {
+    $('#btn_prediction').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/prediction', {
+        asset_id: $('#btn_prediction').val()
+      }, function(data) {
+           console.log(data)
+      });
+      return false;
+    });
+  });
+     </script>
+
+   </body>
+</html>

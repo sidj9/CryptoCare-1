@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>{{currency.name}} Details</title>
+     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+     
+</head>
+ 
+<body>
+ 
+    <div class="container">
+        <div>
+            <h1>{{currency.name}} Details</h1>
+            
+            <ul>
+                <li>Open: {{currency.cr_open}}</li>
+                <li>Close: {{currency.cr_close}}</li>
+                <li>High: {{currency.cr_high}}</li>
+                <li>Low: {{currency.cr_low}}</li>
+
+            </ul>
+        </div>
+        
+        <div>
+        <form>
+        <button id="btn_graph" type="button">Graph</button>
+        <button id="btn_history" type="button">History</button>
+        <button id="btn_social" type="button">Social</button>
+        <button id="btn_market" type="submit" value="{{currency.asset_id}}" >market</button>
+        <button id="btn_prediction" type="button" >Prediction</button>
+        <button id="btn_calculate" type="button">Calculate</button>
+        </form>
+        </div>
+        
+        <div>
+            
+        </div>
+    </div>
+    
+    <script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{
+  url_for('static', filename='jquery-3.3.1.js') }}">\x3C/script>')</script>
+    <script>
+  
+     $(function() {
+    $('#btn_market').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/add_numbers', {
+        name: $('#btn_market').val()
+      }, function(data) {   
+        alert(data.result)
+      });
+      return false;
+    });
+  });
+  
+     </script>
+</body>
+</html>
