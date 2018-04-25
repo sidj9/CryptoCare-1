@@ -123,6 +123,7 @@ def cryptocurrency_in_details(cryptocurrency_asset_id):
     return render_template('cryptocurrency_in_details.html', currency=currency)
 
 
+
 @app.route('/news', methods=["GET"])
 def news():
     # name = Flask.request_class.args.get('name',default=None, type=None)
