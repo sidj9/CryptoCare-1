@@ -15,6 +15,7 @@
     <title>CryptoCare</title>
     <link rel="shortcut icon" href="../static/images/logo_bQ8_icon.ico" type="image/x-icon">
 
+    
 </head>
 
 <body>
@@ -64,12 +65,17 @@
 
             <table id="currencytable" style="width=100%" class="table">
                 <tr>
-                    <th>Name</th>
-                    <th>Open</th>
-                    <th>Close</th>
-                    <th>High</th>
-                    <th>Low</th>
+                 <th>    </th>
+                    <th>Coin</th>
+                    <th>Price</th>
+                    <th>Last Volume To</th>
+                    <th>Total Vol. 24Hr</th>
+                    <th>Open Vol. 24Hr</th>
+                    <th>High Vol. 24Hr</th>
+                    <th>Low Vol. 24Hr</th>
+                    <th>Change 24HR (%)</th>
                 </tr>
+<!--
                 {% for cryptocurrency in cryptocurrencies %}
                 <tr id="dataRow">
                     <td>
@@ -89,6 +95,9 @@
                     </td>
                 </tr>
                 {% endfor %}
+-->
+                <tbody id ="cr_list">
+                </tbody>
             </table>
 
         </div>
@@ -167,19 +176,78 @@
 
 </script>
 <script>
-    //Function to call cyrptocurrencies list after every second
-    setInterval( getCurrencies,1000);
 
-    function getCurrencies(){
-            $.getJSON($SCRIPT_ROOT+'/crycptocurrency_list',function(data){
+    //Get list of Cyrptocurrencies with their symbol and favicon
+    function getCurrenciesList(){
+            $.getJSON($SCRIPT_ROOT+'/cryptocurrency_list',function(data){
                if( data[0].status =="success"){
-                   console.log(data)
+                   var i = 0;
+                        var cr_list_json = JSON.parse(data[1])
+                        console.log(cr_list_json)
+                    for (i; i < cr_list_json.length; i++) {
+                    console.log(cr_list_json[i].symbol);
+                    $("#cr_list").append("<tr id='" + cr_list_json[i].symbol + "'>" +
+                        "<td><img style='width:25px;height:25px' id='img_" + cr_list_json[i].symbol + "'></img></td>" +
+                        "<td><a href='" + cr_list_json[i].symbol + "'>" + cr_list_json[i].name + "</a></td>" +
+                        "<td id='" + cr_list_json[i].symbol + "_cr_price'>&#x24;00.00</td>" +
+                        "<td id='" + cr_list_json[i].symbol + "_cr_last_vol_to'>&#x24;00.00</td>" +
+                        "<td id='" + cr_list_json[i].symbol + "_cr_vol_24_hr'>&#x24;00.00</td>" +
+                        "<td id='" + cr_list_json[i].symbol + "_cr_open_24_hr_open_24_hr'>&#x24;00.00</td>" +
+                                         "<td id='" + cr_list_json[i].symbol + "_cr_high_24_hr'>&#x24;00.00</td>" +
+                        "<td id='" + cr_list_json[i].symbol + "_cr_low_24_hr'>&#x24;00.00</td>" +
+                        "<td id='" + cr_list_json[i].symbol + "cr_change_24_hr'>00.00</td>" +
+                        "</tr>");
+                        
+                        
+                    loadGraphics(cr_list_json[i].symbol, cr_list_json[i].image_url)
+                        getCurrencyData(cr_list_json[i].symbol)
+                }
+
                    }else{
-                   clearInterval(getCurrencies);
                    alert("Oops! Something went wrong.");
                 }
 
             })
     }
+    
+//Load Favicon image for each currency
+function loadGraphics(cr_symbol,url){
+    document.getElementById("img_"+cr_symbol).src = "";
+    document.getElementById("img_"+cr_symbol).src = "https://www.cryptocompare.com"+url;
+}
+
+    var currency_interval;
+    
+    getCurrenciesList();
+    //Function to call cyrptocurrencies list after every second
+    function getCurrencyData(cr_symbol){
+    
+    currency_interval = setInterval( getCurrency_data,500);
+
+    function getCurrency_data(symbol){
+            $.getJSON($SCRIPT_ROOT+'/currency_meta_data',{
+        cr_id: cr_symbol
+      } ,function(data){
+                console.log(data)
+               if(data[0].status =="failed"){
+                    clearInterval(currency_interval);
+                    //alert("Oops! Something went wrong.");
+               }else{
+                   var cr_data_json = JSON.parse(data[1])
+
+                   document.getElementById(cr_symbol+'_cr_price').innerHTML=""+cr_data_json.cr_price
+                   document.getElementById(cr_symbol+'_cr_last_vol_to').innerHTML=""+cr_data_json.cr_last_vol_to
+                   document.getElementById(cr_symbol+'_cr_vol_24_hr').innerHTML=""+cr_data_json.cr_vol_24_hr
+                   document.getElementById(cr_symbol+'_cr_open_24_hr_open_24_hr').innerHTML=""+cr_data_json.cr_open_24_hr
+                   document.getElementById(cr_symbol+'_cr_high_24_hr').innerHTML=""+cr_data_json.cr_high_24_hr
+                   document.getElementById(cr_symbol+'_cr_low_24_hr').innerHTML=""+cr_data_json.cr_low_24_hr
+                   document.getElementById(cr_symbol+'cr_change_24_hr').innerHTML=cr_data_json.cr_change_24_hr
+               }
+
+            })
+    }    
+    }
+    
+
 </script>
 </html>

@@ -36,6 +36,11 @@ forecast_prediction = []
 # Index.html page
 @app.route("/")
 def index():
+    return render_template('index.html')
+
+# Get list of Cryptocurrencies
+@app.route('/cryptocurrency_list', methods=['GET'])
+def getCrycptoCurrencyList():
     try:
         list_ = cryptocompare.get_coin_list(format=False)
         print(type(list_))
@@ -49,46 +54,40 @@ def index():
             if key in crc_list:
                 print(key)
                 print(value)
-                CrCurrencyList.append(CrCurrency(name=value.CoinName, symbol=value.Symbol,url=value.Url, image_url=value.ImageUrl))
+                CrCurrencyList.append(CrCurrency(name=value['CoinName'], symbol=value['Symbol'],url=value['Url'], image_url=value['ImageUrl']))
 
         for cr in CrCurrencyList:
             print(cr)
-        # for key, value in cr_list_json:
-        #     if key in crc_dict:
-        #         print(value)
 
-        return render_template('error_page.html')
-    except:
-        return render_template('error_page.html')
+            return jsonify({'status': 'success'}, json.dumps([ob.__dict__ for ob in CrCurrencyList]))
+    except Exception as e:
+        return jsonify({'status': 'failed'})
 
-
-@app.route("/crycptocurrency_list", methods=["GET"])
+@app.route("/currency_meta_data", methods=["GET"])
 def getCryptoCurrencyList():
+    cr_id = (flask.request.args).to_dict(flat=False)["cr_id"][0]
     try:
         cryptocurrencies_data = []
-        for currency in crc_dict:
-            # URL to get current price data
-            URL = 'https://min-api.cryptocompare.com/data/histominute?fsym={}&tsym=USD&limit=1&aggregate=3&e=CCCAGG'.format(
-                crc_dict[currency])
-            response = requests.get(URL)
+        # URL to get current price data
+        # URL = 'https://min-api.cryptocompare.com/data/histominute?fsym={}&tsym=USD&limit=1&aggregate=3&e=CCCAGG'.format(cr_id)
+        URL = 'https://min-api.cryptocompare.com/data/generateAvg?fsym={}&tsym=USD&e=CCCAGG'.format(cr_id)
+        response = requests.get(URL)
+        # Request successful
+        if response.status_code == 200:
+            json_response = response.json()
+            # store data into cryptocurrency_data list
+            # if json_response['Response'] == 'Success':
+            data = json_response['DISPLAY']
 
-            # Request successful
-            if response.status_code == 200:
-                json_response = response.json()
-                # store data into cryptocurrency_data list
-                if json_response['Response'] == 'Success':
-                    data = json_response['Data'][0]
-                    cryptocurrencies_data.append(
-                        CrCurrency(crc_dict[currency], currency, data['time'], data['close'], data['high'], data['low'],
-                                   data['open'], data['volumefrom'], data['volumeto']))
-                    return jsonify({'status': 'success'},json.dumps([ob.__dict__ for ob in cryptocurrencies_data]))
-                else:
-                    return jsonify({'status': 'error'})
-            # Error occurred
-            else:
-                return jsonify({'status': 'error'})
-    except:
-        return jsonify({'status': 'error'})
+            currency = CrCurrency(asset_id=cr_id, cr_price=data['PRICE'], cr_last_vol_to=data['LASTVOLUMETO'],cr_vol_24_hr=data['VOLUME24HOUR'],cr_open_24_hr=data['OPEN24HOUR'],cr_high_24_hr=data['HIGH24HOUR'],
+                              cr_low_24_hr=data['LOW24HOUR'],cr_change_24_hr=data['CHANGE24HOUR'])
+
+            # return jsonify({'status': 'success'}, json.dumps([ob.__dict__ for ob in currency]))
+            return jsonify({'status': 'success'}, currency.toJSON())
+        else:
+            return jsonify({'status': 'failed'})
+    except Exception as e:
+        return jsonify({'status': 'failed'})
 
 
 # CryptoCurrency_in_details.html page
@@ -122,8 +121,6 @@ def cryptocurrency_in_details(cryptocurrency_asset_id):
         return render_template('error_page.html')
 
     return render_template('cryptocurrency_in_details.html', currency=currency)
-
-
 
 
 @app.route('/news', methods=["GET"])
