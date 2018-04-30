@@ -30,6 +30,8 @@ crc_list = ObjCryptoCurrency.cryptocurrencies_list
 cryptocurrencies_data = []
 
 currency = []
+currency1 = []
+currency2 = []
 forecast_prediction = []
 
 
@@ -91,9 +93,12 @@ def getCryptoCurrencyList():
 
 
 # CryptoCurrency_in_details.html page
+# noinspection PyUnreachableCode
 @app.route("/<cryptocurrency_asset_id>")
 def cryptocurrency_in_details(cryptocurrency_asset_id):
     currency = CrCurrency()
+    currency1 = CrCurrency()
+    currency2 = CrCurrency()
     #    currency_details = CrCurrencyDetails()
     currency_name = ""
     for c_name, c_id in crc_dict.items():
@@ -120,8 +125,47 @@ def cryptocurrency_in_details(cryptocurrency_asset_id):
     else:
         return render_template('error_page.html')
 
-    return render_template('cryptocurrency_in_details.html', currency=currency)
 
+
+    URL = 'https://min-api.cryptocompare.com/data/histohour?fsym={}&tsym=USD&limit=1&aggregate=3&e=CCCAGG'.format(
+        cryptocurrency_asset_id)
+    response = requests.get(URL)
+
+    # Request successful
+    if response.status_code == 200:
+        json_response = response.json()
+        # store data into cryptocurrency_data list
+        if json_response['Response'] == 'Success':
+            data = json_response['Data'][0]
+            currency1 = CrCurrency(cryptocurrency_asset_id, currency_name, data['time'], data['close'], data['high'],
+                                  data['low'], data['open'], data['volumefrom'], data['volumeto'])
+
+        else:
+            return render_template('error_page.html')
+    # Error occurred
+    else:
+        return render_template('error_page.html')
+
+    URL = 'https://min-api.cryptocompare.com/data/histoday?fsym={}&tsym=USD&limit=1&aggregate=3&e=CCCAGG'.format(
+        cryptocurrency_asset_id)
+    response = requests.get(URL)
+
+    # Request successful
+    if response.status_code == 200:
+        json_response = response.json()
+        # store data into cryptocurrency_data list
+        if json_response['Response'] == 'Success':
+            data = json_response['Data'][0]
+            currency2 = CrCurrency(cryptocurrency_asset_id, currency_name, data['time'], data['close'], data['high'],
+                                   data['low'], data['open'], data['volumefrom'], data['volumeto'])
+
+        else:
+            return render_template('error_page.html')
+    # Error occurred
+    else:
+        return render_template('error_page.html')
+
+    return render_template('cryptocurrency_in_details.html', currency1=currency1 , currency = currency , currency2 = currency2)
 
 
 @app.route('/news', methods=["GET"])
