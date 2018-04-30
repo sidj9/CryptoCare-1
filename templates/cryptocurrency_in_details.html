@@ -3,14 +3,31 @@
  
 <head>
     <title>{{currency.name}} Details</title>
-     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!--<script>-->
+<!--$(document).ready(function(){-->
+    <!--$("button").click(function(){-->
+        <!--$("div").toggle();-->
+    <!--});-->
+<!--});-->
+<!--</script>-->
      
 </head>
  
 <body>
     <div class="container">
-        <div>
+        <div id = "toggle">
             <h1>{{currency.name}} Details</h1>
+
+            <table>
+                <tr>
+                    <th>History minute</th>
+                    <th>History hour</th>
+                    <th>History Daily</th>
+                </tr>
+                <tr>
+                    <td>
             
             <ul>
                 <li>Open: {{currency.cr_open}}</li>
@@ -18,13 +35,36 @@
                 <li>High: {{currency.cr_high}}</li>
                 <li>Low: {{currency.cr_low}}</li>
             </ul>
+                    </td>
+                    <td>
+
+            <ul>
+                <li>Open: {{currency1.cr_open}}</li>
+                <li>Close: {{currency1.cr_close}}</li>
+                <li>High: {{currency1.cr_high}}</li>
+                <li>Low: {{currency1.cr_low}}</li>
+            </ul>
+                    </td>
+                    <td>
+
+            <ul>
+                <li>Open: {{currency2.cr_open}}</li>
+                <li>Close: {{currency2.cr_close}}</li>
+                <li>High: {{currency2.cr_high}}</li>
+                <li>Low: {{currency2.cr_low}}</li>
+            </ul>
+                    </td>
+                </tr>
+
+
+                </table>
         </div>
 
         
         <div>
         <form>
         <button id="btn_graph" type="button">Graph</button>
-        <button id="btn_history" type="button">History</button>
+        <button id="btn_history" type="button" onclick="myFunction()">History</button>
         <button id="btn_news" type="submit" value="{{currency.asset_id}}">News</button>
         <button id="btn_market" type="submit" value="{{currency.asset_id}}" >market</button>
         <button id="btn_prediction" type="submit" value="{{currency.asset_id}}">Prediction</button>
@@ -33,6 +73,23 @@
         </div>
         
     </div>
+
+    <!--<script>-->
+<!--function myFunction() {-->
+   <!--var element = document.getElementById("toggle");-->
+   <!--element.toggle();-->
+<!--}-->
+<!--</script>-->
+    <script>
+function myFunction() {
+    var x = document.getElementById("toggle");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+</script>
     
     <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
