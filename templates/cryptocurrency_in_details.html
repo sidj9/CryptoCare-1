@@ -2,9 +2,49 @@
 <html lang="en">
  
 <head>
-    <title>{{currency.name}} Details</title>
+    <title>{{currency_list[0].name}} Details</title>
      <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+</style>
 <!--<script>-->
 <!--$(document).ready(function(){-->
     <!--$("button").click(function(){-->
@@ -17,47 +57,17 @@
  
 <body>
     <div class="container">
-        <div id = "toggle">
-            <h1>{{currency.name}} Details</h1>
+        <div>
+            <h1>{{currency_list[0].name}} Details</h1>
 
-            <table>
-                <tr>
-                    <th>History minute</th>
-                    <th>History hour</th>
-                    <th>History Daily</th>
-                </tr>
-                <tr>
-                    <td>
-            
-            <ul>
-                <li>Open: {{currency.cr_open}}</li>
-                <li>Close: {{currency.cr_close}}</li>
-                <li>High: {{currency.cr_high}}</li>
-                <li>Low: {{currency.cr_low}}</li>
-            </ul>
-                    </td>
-                    <td>
 
             <ul>
-                <li>Open: {{currency1.cr_open}}</li>
-                <li>Close: {{currency1.cr_close}}</li>
-                <li>High: {{currency1.cr_high}}</li>
-                <li>Low: {{currency1.cr_low}}</li>
+                <li>Open: {{currency_list[0].cr_open}}</li>
+                <li>Close: {{currency_list[0].cr_close}}</li>
+                <li>High: {{currency_list[0].cr_high}}</li>
+                <li>Low: {{currency_list[0].cr_low}}</li>
             </ul>
-                    </td>
-                    <td>
 
-            <ul>
-                <li>Open: {{currency2.cr_open}}</li>
-                <li>Close: {{currency2.cr_close}}</li>
-                <li>High: {{currency2.cr_high}}</li>
-                <li>Low: {{currency2.cr_low}}</li>
-            </ul>
-                    </td>
-                </tr>
-
-
-                </table>
         </div>
 
         
@@ -65,14 +75,111 @@
         <form>
         <button id="btn_graph" type="button">Graph</button>
         <button id="btn_history" type="button" onclick="myFunction()">History</button>
-        <button id="btn_news" type="submit" value="{{currency.asset_id}}">News</button>
-        <button id="btn_market" type="submit" value="{{currency.asset_id}}" >market</button>
-        <button id="btn_prediction" type="submit" value="{{currency.asset_id}}">Prediction</button>
+        <button id="btn_news" type="submit" value="{{currency_list[0].asset_id}}">News</button>
+        <button id="btn_market" type="submit" value="{{currency_list[0].asset_id}}" >market</button>
+        <button id="btn_prediction" type="submit" value="{{currency_list[0].asset_id}}">Prediction</button>
         <button id="btn_calculate" type="button">Calculate</button>
         </form>
         </div>
         
     </div>
+
+    <div id = "toggle">
+    <div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'London')">History Minute</button>
+  <button class="tablinks" onclick="openCity(event, 'Paris')">History Hour</button>
+  <button class="tablinks" onclick="openCity(event, 'Tokyo')">History Daily</button>
+</div>
+
+
+<div id="London" class="tabcontent">
+  <table border="1">
+  <tr>
+    <th>Open</th>
+    <th>Close</th>
+    <th>High</th>
+    <th>Low</th>
+    <th>Volume to</th>
+    <th>Volume from</th>
+  </tr>
+      {% for i in range(0,100) %}
+      <tr>
+          <td>{{currency_list[i].cr_open}}</td>
+          <td>{{currency_list[i].cr_close}}</td>
+          <td>{{currency_list[i].cr_high}}</td>
+          <td>{{currency_list[i].cr_low}}</td>
+          <td>{{currency_list[i].cr_volume_to}}</td>
+          <td>{{currency_list[i].cr_volume_from}}</td>
+      </tr>
+      {% endfor %}
+
+</table>
+  </div>
+
+<div id="Paris" class="tabcontent">
+  <table border="1">
+  <tr>
+    <th>Open</th>
+    <th>Close</th>
+    <th>High</th>
+    <th>Low</th>
+    <th>Volume to</th>
+    <th>Volume from</th>
+  </tr>
+      {% for i in range(0,100) %}
+      <tr>
+          <td>{{currency_list1[i].cr_open}}</td>
+          <td>{{currency_list1[i].cr_close}}</td>
+          <td>{{currency_list1[i].cr_high}}</td>
+          <td>{{currency_list1[i].cr_low}}</td>
+          <td>{{currency_list1[i].cr_volume_to}}</td>
+          <td>{{currency_list1[i].cr_volume_from}}</td>
+      </tr>
+      {% endfor %}
+
+</table>
+</div>
+
+<div id="Tokyo" class="tabcontent">
+  <!--<h3></h3>-->
+  <table border="1">
+  <tr>
+    <th>Open</th>
+    <th>Close</th>
+    <th>High</th>
+    <th>Low</th>
+    <th>Volume to</th>
+    <th>Volume from</th>
+  </tr>
+      {% for i in range(0,100) %}
+      <tr>
+          <td>{{currency_list2[i].cr_open}}</td>
+          <td>{{currency_list2[i].cr_close}}</td>
+          <td>{{currency_list2[i].cr_high}}</td>
+          <td>{{currency_list2[i].cr_low}}</td>
+          <td>{{currency_list2[i].cr_volume_to}}</td>
+          <td>{{currency_list2[i].cr_volume_from}}</td>
+      </tr>
+      {% endfor %}
+
+</table>
+</div>
+</div>
+<script>
+function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+</script>
 
     <!--<script>-->
 <!--function myFunction() {-->
